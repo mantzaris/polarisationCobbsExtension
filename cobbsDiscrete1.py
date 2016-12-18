@@ -1,14 +1,19 @@
 import numpy 
+import matplotlib.mlab as mlab
+import matplotlib.pyplot as plt
+import pylab as P
 #extending the Loren Cobbs models to the discrete case for political modelling
 
-print('ok')
 ####NETWORK SETUP
+#time points
+time_pnts = 1
 #number of nodes in linear network
 u_N = 5
 #nodes in the linear network
 network = numpy.random.rand(1,u_N)
-#time points
-time_pnts = 4
+network_tmp = numpy.zeros((1,u_N))
+network_total = numpy.zeros((1+time_pnts,u_N))
+network_total[0,:] = network
 ####
 
 ####CONSTANTS
@@ -41,7 +46,12 @@ for tt in range(time_pnts):
         pol_i = EE * u_i * (1 - u_i) * neighbors_i
         #put all the contributions together for the iteration
         u_i_t = u_i + fb_i + pol_i
-        print(network)
-        print([u_i,neighbors_i,u_i_t])
-        print([fb_i,pol_i])
-
+        #update the network temp array
+        network_tmp[0,ii] = u_i_t    
+    network_total[tt+1,:] = network_tmp[0,:]    
+    #plot the histogram of the u_i after each iteration
+    bins = [0,0.2,0.4,0.6,0.8,1]    
+    binspaces = [ii/10 for ii in range(0,11)]
+    P.figure()
+    n, bins, patches = P.hist(network[0], binspaces,normed=1,histtype='bar')
+    P.show()
