@@ -6,7 +6,7 @@ import pylab as P
 
 ####NETWORK SETUP
 #time points
-time_pnts = 1
+time_pnts = 3
 #number of nodes in linear network
 u_N = 5
 #nodes in the linear network
@@ -39,19 +39,30 @@ for tt in range(time_pnts):
         elif (ii == (u_N-1)):
             neighbors_i = network[0,u_N-2]
         else:
-            neighbors_i = (network[0,ii-1] + network[0,ii+1])
+            neighbors_i = 0.5*(network[0,ii-1] + network[0,ii+1])
         #the feedback effect to return to natural internal state G upon deviation
-        fb_i = RR * (GG - u_i)
+        fb_i = RR * (GG - u_i)                  
         #contribution of neighbors upon polarisation extent
         pol_i = EE * u_i * (1 - u_i) * neighbors_i
         #put all the contributions together for the iteration
         u_i_t = u_i + fb_i + pol_i
+        if(u_i_t < 0):
+            u_i_t = 0
+        elif(u_i_t > 1):
+            u_i_t = 1   
         #update the network temp array
         network_tmp[0,ii] = u_i_t    
     network_total[tt+1,:] = network_tmp[0,:]    
     #plot the histogram of the u_i after each iteration
-    bins = [0,0.2,0.4,0.6,0.8,1]    
-    binspaces = [ii/10 for ii in range(0,11)]
-    P.figure()
-    n, bins, patches = P.hist(network[0], binspaces,normed=1,histtype='bar')
-    P.show()
+binspaces = [ii/10 for ii in range(0,11)]
+#P.figure()
+print(network_total)
+f,axarr = plt.subplots(time_pnts+1,sharex=True)
+for ii in range(time_pnts+1):
+    axarr[ii].hist(network_total[ii,:], binspaces,normed=1,histtype='bar')
+    axarr[ii].set_title('iteration:'+str(ii))
+    #axarr[ii].xlabel('u')
+f.suptitle('RR value='+str(RR)+', EE value='+str(EE)+', DD value='+str(DD))
+P.show()
+#axarr[0].hist(network_total[0,:], binspaces,normed=1,histtype='bar')
+#axarr[1].hist(network_total[1,:], binspaces,normed=1,histtype='bar')
