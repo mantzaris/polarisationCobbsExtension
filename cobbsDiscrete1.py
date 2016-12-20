@@ -6,9 +6,9 @@ import pylab as P
 
 ####NETWORK SETUP
 #time points
-time_pnts = 16
+time_pnts = 14
 #number of nodes in linear network
-u_N = 8
+u_N = 15
 #nodes in the linear network
 network = numpy.random.rand(1,u_N)
 network_tmp = numpy.zeros((1,u_N))
@@ -18,16 +18,16 @@ network_total[0,:] = network
 
 ####CONSTANTS
 #The attractor coefficient/constant GG (what is the 'normal' for each node)
-GG = 0.65
+GG = 0.5
 #The coefficitent of feedback to state GG (how much force to return to GG)
-RR = .01
+RR = 0.001
 #The coefficient/constant EE for neighboring influence (how much do they affect)
-EE = 10
+EE = 1000
 #The ratio of internal to external influence
 DD = EE / RR
 
 ####MODEL
-#u_i^{t+1} = (u_i^{t}) + (dt * RR * (GG - u_i^{k})) + (EE * u_i^{k} * (1-u_i^{k}) * Su_j^{k}))  for all j neighbors of i, j in a_{i,j} 
+#u_i^{t+1} = (u_i^{t}) + (dt * RR * (GG - u_i^{k})) + (EE * u_i^{k} * (1-u_i^{k}) *( Su_j^{k}-GG))  for all j neighbors of i, j in a_{i,j} 
 #different components for this will be aggregated for clarity
 
 for tt in range(1,time_pnts):
@@ -43,7 +43,7 @@ for tt in range(1,time_pnts):
         #the feedback effect to return to natural internal state G upon deviation
         fb_i = RR * (GG - u_i)                  
         #contribution of neighbors upon polarisation extent
-        pol_i = EE * u_i * (1 - u_i) * (GG - neighbors_i)
+        pol_i = EE * u_i * (1 - u_i) * (neighbors_i - GG)
         #put all the contributions together for the iteration
         u_i_t = u_i + fb_i + pol_i
         if(u_i_t < 0):
