@@ -70,20 +70,14 @@ f.suptitle('RR value='+str(RR)+', EE value='+str(EE)+', DD value='+str(DD))
 #grayscale/heatmap of the number of nodes occupying each bin of the spectrum
 fig2,ax2 = plt.subplots(1,1)
 plt.imshow(network_gryscle,cmap='gray',interpolation='none')
-
 pos_tmp = [binspaces[ii]*10 for ii in range(len(binspaces))]
 ax2.set_xticks(np.arange(-.5, 10, 1));
 ax2.set_xticklabels(np.arange(0, 1.1, 0.1));
 
-#ax2.set_xticks(numpy.arange(-0.5,0,10))
-#ax2.set_xticklabels(pos_tmp,binspaces)
-
-#plt.tick_params(axis='x',left='on')
-#ax = plt.gca()
-#ax.get_xaxis().set_tick_params(direction='out')
 plt.xlabel('polarisation interval')
 plt.ylabel('iteration number')
 plt.title('density of the bins along the political spectrum over time')
+plt.colorbar()
 #figure()
 ################
 plt.subplots(1,1)
@@ -95,7 +89,7 @@ xticks(pos_tmp,pos_tmp2)
 plt.ylabel('iteration number')
 plt.xlabel('node id')
 plt.title('political parameters for each node over time')
-
+plt.colorbar()
 P.show()
 
 
