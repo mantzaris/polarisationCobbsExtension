@@ -7,9 +7,9 @@ from pylab import *
 
 ####NETWORK SETUP
 #time points
-time_pnts = 5
+time_pnts = 15
 #number of nodes in linear network
-u_N = 5
+u_N = 4
 #nodes in the linear network
 network = numpy.random.rand(1,u_N)
 network_tmp = numpy.zeros((1,u_N))
@@ -21,9 +21,9 @@ network_total[0,:] = network
 #The attractor coefficient/constant GG (what is the 'normal' for each node)
 GG = 0.5
 #The coefficitent of feedback to state GG (how much force to return to GG)
-RR = 0.001
+RR = 1
 #The coefficient/constant EE for neighboring influence (how much do they affect)
-EE = 1000
+EE = 1
 #The ratio of internal to external influence
 DD = EE / RR
 
@@ -65,10 +65,38 @@ for ii in range(time_pnts):
     axarr[ii].set_title('iteration:'+str(ii))
     #axarr[ii].xlabel('u')
 f.suptitle('RR value='+str(RR)+', EE value='+str(EE)+', DD value='+str(DD))
-#P.show()
-#P.figure()
+
+#######
 #grayscale/heatmap of the number of nodes occupying each bin of the spectrum
-figure()
-plt.imshow(network_gryscle,cmap='gray')
-f.suptitle('RR value='+str(RR)+', EE value='+str(EE)+', DD value='+str(DD))
+fig2,ax2 = plt.subplots(1,1)
+plt.imshow(network_gryscle,cmap='gray',interpolation='none')
+
+pos_tmp = [binspaces[ii]*10 for ii in range(len(binspaces))]
+ax2.set_xticks(np.arange(-.5, 10, 1));
+ax2.set_xticklabels(np.arange(0, 1.1, 0.1));
+
+#ax2.set_xticks(numpy.arange(-0.5,0,10))
+#ax2.set_xticklabels(pos_tmp,binspaces)
+
+#plt.tick_params(axis='x',left='on')
+#ax = plt.gca()
+#ax.get_xaxis().set_tick_params(direction='out')
+plt.xlabel('polarisation interval')
+plt.ylabel('iteration number')
+plt.title('density of the bins along the political spectrum over time')
+#figure()
+################
+plt.subplots(1,1)
+norm1 = mpl.colors.Normalize(vmin=0.0,vmax=1.0)
+plt.imshow(network_total,cmap='gray',norm=norm1,interpolation='none')
+pos_tmp = [ii for ii in range(u_N)]
+pos_tmp2 = [ii+1 for ii in range(u_N)]
+xticks(pos_tmp,pos_tmp2)
+plt.ylabel('iteration number')
+plt.xlabel('node id')
+plt.title('political parameters for each node over time')
+
 P.show()
+
+
+
