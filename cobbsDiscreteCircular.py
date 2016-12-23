@@ -3,13 +3,14 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import pylab as P
 from pylab import *
+import math
 #extending the Loren Cobbs models to the discrete case for political modelling
 
 ####NETWORK SETUP
 #time points
-time_pnts = 20
+time_pnts = 50
 #number of nodes in linear network
-u_N = 14
+u_N = 12
 #nodes in the linear network
 network = numpy.random.rand(1,u_N)
 network_tmp = numpy.zeros((1,u_N))
@@ -19,25 +20,32 @@ network_total[0,:] = network
 
 ####CONSTANTS
 #The attractor coefficient/constant GG (what is the 'normal' for each node)
-GG = 0.45
+GG = 0.5
 #The coefficitent of feedback to state GG (how much force to return to GG)
-RR = 0.01
+RR = 0.05
 #The coefficient/constant EE for neighboring influence (how much do they affect)
-EE = 100.00000
+EE = 1
 #The ratio of internal to external influence
 DD = EE / RR
+#######
+#root1 = 0.5*(1 - math.sqrt(1-(4*(DD**(-1)))))
+#root2 = 0.5*(1 + math.sqrt(1-(4*(DD**(-1)))))
+#network_total[0,0:math.floor(u_N/2)] = root2
+#network_total[0,math.floor(u_N/2):u_N] = root2
+#print(network_total[0,:])
+#exit()
 
 ####MODEL
 #u_i^{t+1} = (u_i^{t}) + (dt * RR * (GG - u_i^{k})) + (EE * u_i^{k} * (1-u_i^{k}) *( Su_j^{k}-GG))  for all j neighbors of i, j in a_{i,j} 
 #different components for this will be aggregated for clarity
 
-for tt in range(1,time_pnts):
+for tt in range(1,time_pnts):#07716503153
     for ii in range(u_N):        
         u_i = network_total[tt-1,ii]#value of current node        
         neighbors_i = -1
         if (ii == 0):#avg neighbors for the first node that wraps to the last node
             neighbors_i = 0.5*(network_total[tt-1,1] + network_total[tt-1,u_N-1])
-        elif (ii == (u_N-1)):#avg neighbors for the last node that wraps to 
+        elif (ii == (u_N-1)):#avg neighbors for the last node that wraps to
             neighbors_i = 0.5*(network_total[tt-1,u_N-2] + network_total[tt-1,0])
         else:
             neighbors_i = 0.5*((network_total[tt-1,ii-1]) \
@@ -54,9 +62,10 @@ for tt in range(1,time_pnts):
             u_i_t = 1   
         #update the network temp array
         network_tmp[0,ii] = u_i_t    
-    network_total[tt,:] = network_tmp[0,:]    
+    network_total[tt,:] = network_tmp[0,:]   
     #plot the histogram of the u_i after each iteration
 binspaces = [ii/10 for ii in range(0,11)]
+print(network_total)
 f,axarr = plt.subplots(time_pnts,sharex=True)
 network_gryscle = numpy.zeros((time_pnts,len(binspaces)-1))
 for ii in range(time_pnts):
