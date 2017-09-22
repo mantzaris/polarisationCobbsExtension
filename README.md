@@ -10,6 +10,6 @@ Pushed Alex H. Branch adding cobbs_run_extreme.py
 Pushed updates to master branch edits to cobbs_run_extreme.py and README.MD
 * Went through code I think I have a working python model. And it looks like it is doing what it should be.
 * Still need to find a good way to do a waterfall plot in python
-#####9/22/17
+##### 9/22/17
 Pushed updates to master branch edits to cobbs_run_extreme.py and README.MD
 * Went through the code and I think everything is looking good. I also figured out how to plot the solutions.
