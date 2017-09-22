@@ -6,9 +6,7 @@ on 9/6/17
 Python code for the SDE model
 """
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.collections import PolyCollection
 import matplotlib.pyplot as plt
-from matplotlib import colors as mcolors
 import numpy as np
 
 # Constants
@@ -56,27 +54,20 @@ for k in range(0, steps):
 	
 	uk = ukp1
 
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
-#
-# xs = np.arange(1, N)
-# verts = []
-# zs = [0.0, 1.0, 2.0, 3.0]
-#
-# for z in zs:
-# 	ys = np.random.rand(len(xs))
-# 	ys[0], ys[-1] = 0, 0
-# 	verts.append(list(zip(xs, ys)))
-#
-# poly = PolyCollection(verts, facecolors=['r', 'g', 'c', 'y'])
-#
-# ax.add_collection3d(poly, zs=zs, zdir='y')
-#
-# ax.set_xlabel('X')
-# ax.set_xlim3d(1, N)
-# ax.set_ylabel('Y')
-# ax.set_ylim3d(1, N)
-# ax.set_zlabel('Z')
-# ax.set_zlim3d(0, 1)
-#
-# plt.show()
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1, projection='3d')
+
+X = np.arange(1, N + 1)
+Y = np.arange(1, N + 1)
+X, Y = np.meshgrid(X, Y)
+
+ax.plot_surface(X, Y, u_sol, rstride=1, cstride=1, cmap=plt.cm.autumn)
+
+ax.set_xlabel('X')
+ax.set_xlim3d(1, N)
+ax.set_ylabel('Y')
+ax.set_ylim3d(1, N)
+ax.set_zlabel('Z')
+ax.set_zlim3d(0, 1)
+
+plt.savefig("cobbs_run_extreme.png")
