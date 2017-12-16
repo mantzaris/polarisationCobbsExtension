@@ -34,25 +34,25 @@ u_zero[N // 2:] = 0.8
 uk = u_zero
 steps = 5
 
-u_sol = np.zeros([N, steps+1])
+u_sol = np.zeros([N, steps + 1])
 u_sol[:, 0] = u_zero.transpose()
 
 for k in range(0, steps):
-	ukp1 = uk + r * (g - uk) + epsilon * (uk * (1 - uk)) * (0.5 * A * uk - g)
-	
-	ukp1.resize(N)
+    ukp1 = uk + r * (g - uk) + epsilon * (uk * (1 - uk)) * (0.5 * A * uk - g)
 
-	a1 = np.where(uk < 0)
+    ukp1.resize(N)
 
-	a2 = np.where(uk > 0)
+    a1 = np.where(uk < 0)
 
-	uk[a1] = 0.005
-	uk[a2] = 0.995
-	
-	uk = uk.transpose()
-	u_sol[:, k + 1] = ukp1
-	
-	uk = ukp1
+    a2 = np.where(uk > 0)
+
+    uk[a1] = 0.005
+    uk[a2] = 0.995
+
+    uk = uk.transpose()
+    u_sol[:, k + 1] = ukp1
+
+    uk = ukp1
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1, projection='3d')
