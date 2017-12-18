@@ -24,15 +24,33 @@ gdp_min = []
 gdp_max = []
 
 for country, gdp in gdp_dict.items():
-	
 	gdp_min.append(gdp)
 	gdp_max.append(gdp)
 
 gdp_min = np.nanmin(gdp_min)
 gdp_max = np.nanmax(gdp_max)
 
-# Reformat dictionary to show 1 as max gdp and 0 as lowest and some fraction of those in between
 
+def normalize(x, min_x, max_x):
+	"""
+	Goal of this function is to normalize passed data given the min and max of the data to fit in 0 - 1
+	
+	:param x: Array Like structure: The data to be normalized
+	:param min_x: Float like: The minimum of the data set
+	:param max_x: Float like: The maximum of the data set
+	
+	:return: Array: The normalized data in an array with values ranging from 0 to 1
+	"""
+	return (x - min_x) / (max_x - min_x)
+
+
+# Reformat dictionary to show 1 as max gdp and 0 as lowest and some fraction of those in between
+# Created a new dictionary to store the normalized data with the keys being the countries and the values are
+# an array with index equivalent to the years from 1960 - 2016
+normalized_dict = {}
+for country, gdp in gdp_dict.items():
+	temp_dict = {country: normalize(gdp, gdp_min, gdp_max)}
+	normalized_dict.update(temp_dict)
 
 
 # Creation of the ring network for North America
