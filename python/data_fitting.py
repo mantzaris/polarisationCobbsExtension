@@ -53,5 +53,12 @@ for country, gdp in gdp_dict.items():
 	normalized_dict.update(temp_dict)
 
 
-# Creation of the ring network for North America
+# Data fitting
 N = len(gdp_dict.keys())
+cols = list(range(1, 19))
+
+adj_matrix = np.loadtxt("data/adjacencyAmericas.csv", delimiter=",", usecols=list(range(1, 19)), skiprows=1)
+
+gdp_mean = np.mean(list(gdp_mean_dict.values()))
+g = normalize(gdp_mean, gdp_min, gdp_max)
+

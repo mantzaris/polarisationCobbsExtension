@@ -70,4 +70,4 @@ ax.set_ylim3d(1, N)
 ax.set_zlabel('Z')
 ax.set_zlim3d(0, 1)
 
-plt.savefig("cobbs_run_extreme.png")
+plt.savefig("figs/cobbs_run_extreme.png")
