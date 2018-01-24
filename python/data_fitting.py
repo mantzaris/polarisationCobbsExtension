@@ -54,11 +54,40 @@ for country, gdp in gdp_dict.items():
 
 
 # Data fitting
-N = len(gdp_dict.keys())
-cols = list(range(1, 19))
+time_points = len(gdp_mean_dict.keys())
+countries = list(gdp_dict.keys())
+network_tmp = np.zeros((1, len(countries)))
+network_total = np.zeros((time_points, len(countries)))
 
 adj_matrix = np.loadtxt("data/adjacencyAmericas.csv", delimiter=",", usecols=list(range(1, 19)), skiprows=1)
 
 gdp_mean = np.mean(list(gdp_mean_dict.values()))
 g = normalize(gdp_mean, gdp_min, gdp_max)
+r = 1
+e = 1
 
+for year in range(0, time_points):
+	for i, country in enumerate(countries):
+		
+		u_i = normalized_dict[country][year]
+		
+		if country == countries[0]:
+			neighbors_i = normalized_dict[countries[1]][year]
+			
+		elif country == countries[-1]:
+			neighbors_i = normalized_dict[countries[-2]][year]
+
+		else:
+			neighbors_i = 0.5 * (normalized_dict[countries[i - 1]][year] + normalized_dict[countries[i + 1]][year])
+		
+		fb_i = r * (g - u_i)
+		pol_i = e * u_i * (1 - u_i) * (neighbors_i - g)
+		u_i_t = u_i + fb_i + pol_i
+		
+		if u_i_t < 0:
+			u_i_t = 0
+		elif u_i_t > 1:
+			u_i_t = 1
+		
+		network_tmp[0, i] = u_i_t
+	network_total[year, :] = network_tmp[0, :]
