@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 """
 data_fitting
-
 Created by alex
 on 12/15/17
-
 Fits the GDP data into the Cobbs Discrete model to test
 """
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import pyplot as plt
+from matplotlib import cm
 import numpy as np
 import pandas as pd
 
@@ -34,11 +35,11 @@ gdp_max = np.nanmax(gdp_max)
 def normalize(x, min_x, max_x):
 	"""
 	Goal of this function is to normalize passed data given the min and max of the data to fit in 0 - 1
-	
+
 	:param x: Array Like structure: The data to be normalized
 	:param min_x: Float like: The minimum of the data set
 	:param max_x: Float like: The maximum of the data set
-	
+
 	:return: Array: The normalized data in an array with values ranging from 0 to 1
 	"""
 	return (x - min_x) / (max_x - min_x)
@@ -51,7 +52,6 @@ normalized_dict = {}
 for country, gdp in gdp_dict.items():
 	temp_dict = {country: normalize(gdp, gdp_min, gdp_max)}
 	normalized_dict.update(temp_dict)
-
 
 # Data fitting
 time_points = len(gdp_mean_dict.keys())
@@ -68,26 +68,45 @@ e = 1
 
 for year in range(0, time_points):
 	for i, country in enumerate(countries):
-		
+
 		u_i = normalized_dict[country][year]
-		
+
 		if country == countries[0]:
 			neighbors_i = normalized_dict[countries[1]][year]
-			
+
 		elif country == countries[-1]:
 			neighbors_i = normalized_dict[countries[-2]][year]
 
 		else:
 			neighbors_i = 0.5 * (normalized_dict[countries[i - 1]][year] + normalized_dict[countries[i + 1]][year])
-		
+
 		fb_i = r * (g - u_i)
 		pol_i = e * u_i * (1 - u_i) * (neighbors_i - g)
 		u_i_t = u_i + fb_i + pol_i
-		
+
 		if u_i_t < 0:
 			u_i_t = 0
 		elif u_i_t > 1:
 			u_i_t = 1
-		
+
 		network_tmp[0, i] = u_i_t
 	network_total[year, :] = network_tmp[0, :]
+
+# Plotting
+
+nx = len(countries)
+ny = time_points
+
+x = range(nx)
+y = range(ny)
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+X, Y = np.meshgrid(x, y)
+surface = ax.plot_surface(X, Y, network_total, rstride=1, cstride=1, cmap=cm.coolwarm)
+
+ax.set_xlabel('countries corresponding to adjacency list')
+ax.set_ylabel('Time points in years')
+
+plt.savefig('figs/polarizations.png')
