@@ -19,7 +19,6 @@ gdp_dict = df.set_index('Country Name').T.to_dict('list')
 
 # Keys are year, values are mean gdp of all countries at that year
 gdp_mean_dict = df.mean().to_dict()
-
 # Find max/min of all years and all countries gdp
 gdp_min = []
 gdp_max = []
