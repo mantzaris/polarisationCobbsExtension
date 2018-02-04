@@ -40,8 +40,7 @@ for tt in range(1, time_pnts):
 		elif ii == (u_N - 1):
 			neighbors_i = network_total[tt - 1, u_N - 2]
 		else:
-			neighbors_i = 0.5 * ((network_total[tt - 1, ii - 1])
-								 + (network_total[tt - 1, ii + 1]))
+			neighbors_i = 0.5 * ((network_total[tt - 1, ii - 1]) + (network_total[tt - 1, ii + 1]))
 		# the feedback effect to return to natural internal state G upon deviation
 		fb_i = RR * (GG - u_i)
 		# contribution of neighbors upon polarisation extent

@@ -78,7 +78,7 @@ normalized_gdp = normalize(gdp_array, gdp_min, gdp_max).reshape(len(countries), 
 # Setup
 normalized_gdp_nans = normalized_gdp[~np.isnan(normalized_gdp)]
 network_total = np.zeros((len(countries), len(years)))
-network_tmp = np.zeros((1, len(countries)))
+network_tmp = np.zeros((1, len(years)))
 
 adj_matrix = np.loadtxt("data/adjacencyAmericas.csv", delimiter=",", usecols=list(range(1, 19)), skiprows=1)
 
@@ -89,27 +89,32 @@ e = 1
 for year in range(len(years)):
 	for country in range(len(countries)):
 
-		u_i = normalized_gdp[country][year]		# Current node value
-		neighbors = -1
+		u_i = normalized_gdp[country][year]					# Current node value
+		neighbors = np.where(adj_matrix[country] == 1)		# Check for the neighbors of the current node
+		neighbors_i = -1
 
-		for j in adj_matrix[country]:
+		if len(neighbors[0] > 0):							# Meaning if they have neighbors or not
+			size = len(neighbors[0])
 
-			if j == 0:
-				# Not neighbors
-				pass
+			while size > 0:									# Add up the neighbors
+				size -= 1
+				neighbors_i = normalized_gdp[neighbors[0][size]][year] + normalized_gdp[neighbors[0][size - 1]]
 
-			else:
-				neighbors = 0.5 * ((normalized_gdp[int(j)][year]) + (normalized_gdp[int(j)][year]))
+			neighbors_i = 0.5 * neighbors_i
 
-		fb_i = r * (g - u_i)
-		pol_i = e * u_i * (1 - u_i) * (neighbors - g)
-		u_i_t = u_i + fb_i + pol_i
+			# the feedback effect to return to natural internal state G upon deviation
+			fb_i = r * (g - u_i)
 
-		network_tmp[0, country] = u_i_t
-	network_total[:, year] = network_tmp[0, :]
+			# contribution of neighbors upon polarisation extent
+			pol_i = e * u_i * (1 - u_i) * (neighbors_i - g)
+
+			# put all the contributions together for the iteration
+			u_i_t = u_i + fb_i + pol_i
+			network_tmp = u_i_t
+		network_total[country][:] = network_tmp
 
 # Plotting
-
+print(network_total)
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
@@ -120,5 +125,6 @@ surface = ax.plot_surface(X, Y, network_total, rstride=1, cstride=1, cmap=cm.coo
 ax.set_title('Polarized model')
 ax.set_ylabel('countries corresponding to adjacency list')
 ax.set_xlabel('Time points in years')
+ax.set_zlabel('Influence from other countries')
 
 plt.savefig('figs/polarizations_reworked.png')
