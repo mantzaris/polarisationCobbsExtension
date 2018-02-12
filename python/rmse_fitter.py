@@ -4,8 +4,8 @@ created by alex on 2/10/18
 
 fits r and epsilon based on the best rmse
 """
-
-
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -100,14 +100,14 @@ def param_value_finder():
 		for year in range(len(years)):
 			for country in range(len(countries)):
 
-				u_i = normalized_gdp[country][year]					# Current node value
-				neighbors = np.where(adj_matrix[country] == 1)		# Check for the neighbors of the current node
+				u_i = normalized_gdp[country][year]  # Current node value
+				neighbors = np.where(adj_matrix[country] == 1)  # Check for the neighbors of the current node
 				neighbors_i = -1
 
-				if len(neighbors[0] > 0):							# Meaning if they have neighbors or not
+				if len(neighbors[0] > 0):  # Meaning if they have neighbors or not
 					size = len(neighbors[0])
 
-					while size > 0:									# Add up the neighbors
+					while size > 0:  # Add up the neighbors
 						size -= 1
 						neighbors_i = normalized_gdp[neighbors[0][size]][year] + normalized_gdp[neighbors[0][size - 1]]
 
@@ -132,5 +132,20 @@ def param_value_finder():
 
 	e_array = np.array(e_list)
 	r_array = np.array(r_list)
+
+	fig = plt.figure()
+	ax = fig.add_subplot(111, projection='3d')
+
+	ax.view_init(elev=0, azim=-25)
+
+	for r, e, rmse_val in zip(r_list, e_list, rmse_list):
+		ax.scatter(r, e, rmse_val)
+
+	ax.set_title('Root mean square error plotted by the r and epsilon values')
+	ax.set_xlabel('r value')
+	ax.set_ylabel('epsilon value')
+	ax.set_zlabel('rmse value')
+
+	plt.savefig('figs/rmse.png')
 
 	return r_array[-1], e_array[-1]
