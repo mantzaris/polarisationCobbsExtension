@@ -18,6 +18,6 @@ americas_list = list(americas_list['Country'])
 
 # Find the GDP of the countries in the americas_list and then drop the unneeded columns from the data frame
 americas_gdp = gdp_df.loc[gdp_df['Country Name'].isin(americas_list)].drop(['Country Code', 'Indicator Code',
-
                                                                             'Indicator Name'], axis=1)
+
 americas_gdp.to_csv('data/americas_gdp.csv', index=False)
