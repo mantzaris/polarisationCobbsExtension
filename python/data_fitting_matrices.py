@@ -83,6 +83,8 @@ network_tmp = np.zeros((1, len(years)))
 adj_matrix = np.loadtxt("data/adjacencyAmericas.csv", delimiter=",", usecols=list(range(1, 19)), skiprows=1)
 
 g = np.mean(normalized_gdp_nans)
+
+# Train these values for a value with the least root mean square error
 r = 1
 e = 1
 

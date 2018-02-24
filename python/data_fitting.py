@@ -52,7 +52,37 @@ for country, gdp in gdp_dict.items():
 	temp_dict = {country: normalize(gdp, gdp_min, gdp_max)}
 	normalized_dict.update(temp_dict)
 
-# Data fitting
+# Plotting Normalized GDP
+
+# normalized dictionary in a list for indexing 1st index is the country, 2nd index is to choose the place in the tuple,
+# where 0 is the string of the country and 1 is the array, 3rd index is the place in the array if choosing in 2nd index
+normalized_items = list(normalized_dict.items())
+x = []
+y = []
+z = []
+for i in range(len(normalized_items)):
+	x.append(normalized_items[i][0])
+	z.append(normalized_items[i][1])
+	
+for i in range(len(list(gdp_mean_dict.keys()))):
+	y.append(int(list(gdp_mean_dict.keys())[i]))
+
+X, Y = np.meshgrid(range(len(x)), y)
+print(z[0][:])
+for i, j in range(len(z)):
+	pass
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+#
+# surface = ax.plot_surface(X, Y, z, rstride=1, cstride=1, cmap=cm.coolwarm)
+#
+# ax.set_xlabel('countries corresponding to adjacency list')
+# ax.set_ylabel('Time points in years')
+# ax.set_zlabel('Normalized GDP')
+#
+# plt.show()
+
+#  Data fitting
 time_points = len(gdp_mean_dict.keys())
 countries = list(gdp_dict.keys())
 network_tmp = np.zeros((1, len(countries)))
@@ -108,4 +138,4 @@ surface = ax.plot_surface(X, Y, network_total, rstride=1, cstride=1, cmap=cm.coo
 ax.set_xlabel('countries corresponding to adjacency list')
 ax.set_ylabel('Time points in years')
 
-plt.savefig('figs/polarizations.png')
+# plt.show()
