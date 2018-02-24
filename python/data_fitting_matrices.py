@@ -4,13 +4,15 @@ created by alex on 2/2/18
 
 Fits the GDP data into the Cobbs Discrete model using matrices
 """
-
 from matplotlib import cm
 from matplotlib import pyplot as plt
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 from mpl_toolkits.mplot3d import Axes3D
-
+import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
+
+from python import rmse_fitter
 
 
 def normalize(x, min_x, max_x):
@@ -84,9 +86,9 @@ adj_matrix = np.loadtxt("data/adjacencyAmericas.csv", delimiter=",", usecols=lis
 
 g = np.mean(normalized_gdp_nans)
 
-# Train these values for a value with the least root mean square error
-r = 1
-e = 1
+params = rmse_fitter.param_value_finder()
+r = params[0]
+e = params[1]
 
 for year in range(len(years)):
 	for country in range(len(countries)):
@@ -112,21 +114,39 @@ for year in range(len(years)):
 
 			# put all the contributions together for the iteration
 			u_i_t = u_i + fb_i + pol_i
+
 			network_tmp = u_i_t
-		network_total[country][:] = network_tmp
+		network_total[country] = network_tmp
 
 # Plotting
-print(network_total)
-fig = plt.figure()
+fig = plt.figure(figsize=(12, 9))
 ax = fig.add_subplot(111, projection='3d')
+
 
 X, Y = np.meshgrid(range(len(years)), range(len(countries)))
 
 surface = ax.plot_surface(X, Y, network_total, rstride=1, cstride=1, cmap=cm.coolwarm)
 
+ax.view_init(azim=-20, elev=10)
 ax.set_title('Polarized model')
-ax.set_ylabel('countries corresponding to adjacency list')
-ax.set_xlabel('Time points in years')
-ax.set_zlabel('Influence from other countries')
 
-plt.savefig('figs/polarizations_reworked.png')
+ax.set_xlabel('Time points in years')
+ax.set_zlabel('Change in GDP')
+
+majorLocator = MultipleLocator(1)
+majorFormatter = FormatStrFormatter('%s')
+
+ax.yaxis.set_major_locator(majorLocator)
+ax.yaxis.set_major_formatter(majorFormatter)
+
+ax.set_yticklabels(countries, rotation=90)
+
+extraString = 'epsilon={}\nr={}'.format(e, r)
+
+handles, labels = ax.get_legend_handles_labels()
+handles.append(mpatches.Patch(color='none', label=extraString))
+ax.legend(handles=handles, loc='best')
+
+plt.savefig('figs/polarizations_beautified.png')
+
+plt.show()
